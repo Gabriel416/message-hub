@@ -31,7 +31,6 @@ router.post("/", (req, res, next) => {
       throw "Nexmo returned back a non-zero status";
     } else {
       res.json(response);
-      console.log(response);
     }
   });
 });
