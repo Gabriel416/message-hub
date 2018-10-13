@@ -5,7 +5,6 @@ const router = express.Router();
 
 /* send sms */
 router.post("/", (req, res, next) => {
-  console.log(req.body, "REQ");
   let { phone, message } = req.body;
 
   const formattedPhone = phoneUtil(phone)[0];
@@ -24,13 +23,13 @@ router.post("/", (req, res, next) => {
 
   nexmo.message.sendSms(process.env.NEXMO_VIRTUAL_NUMBER, to, text, (error, response) => {
     if (error) {
-      res.status(500).send(error);
+      res.status(500).send({ Error: error });
       throw error;
     } else if (response.messages[0].status != "0") {
       res.json("Server returned back a non-zero status");
       throw "Nexmo returned back a non-zero status";
     } else {
-      res.json(response);
+      res.json({ Success: response });
     }
   });
 });

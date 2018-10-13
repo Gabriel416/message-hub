@@ -42,12 +42,11 @@ router.post("/", function(req, res, next) {
   sendgrid
     .send(email)
     .then(response => {
-      // console.log(response, "response");
       res.send({ Success: response });
     })
     .catch(err => {
       console.log(err, "err");
-      res.status(500).send(err);
+      res.status(500).send({ Error: err });
     });
 });
 
