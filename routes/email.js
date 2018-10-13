@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 const sendgrid = require("@sendgrid/mail");
 const validator = require("validator");
+const handlebars = require("handlebars");
+const path = require("path");
+const fs = require("fs");
 
 sendgrid.setApiKey(process.env.SENDGRID_SECRET);
 
 /* Send general email. */
 router.post("/", function(req, res, next) {
-  console.log(req.body, "req");
   let { to, sender, subject, text } = req.body;
 
   if (!validator.isEmail(sender)) {
@@ -22,11 +24,19 @@ router.post("/", function(req, res, next) {
     res.status(500).send("Invalid recipient emails");
   }
 
+  const source = fs.readFileSync(
+    path.join(__dirname, "../") + "/public/email/general.html",
+    "utf8"
+  );
+
+  const template = handlebars.compile(source);
+  const result = template({ text });
+
   const email = {
     to,
     from: sender,
     subject,
-    text,
+    html: result,
   };
 
   sendgrid
